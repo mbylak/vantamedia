@@ -1,4 +1,11 @@
 {
+  "redirects": [
+    {
+      "source": "/vantamedia_pl_landing_page.html",
+      "destination": "/",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/",
