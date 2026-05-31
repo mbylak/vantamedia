@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VantaMedia.pl - Strony, które pracują na Twój sukces</title>
+    
+    <!-- Tailwind CSS (CDN for standalone file) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Phosphor Icons (for crisp, clean UI icons) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind Config for specific colors and styling -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb', // Główny niebieski
+                        'primary-dark': '#1d4ed8',
+                        navy: '#1e3a8a', // Ciemny granat
+                        'navy-dark': '#0f172a', // Nagłówki
+                        light: '#dbeafe', // Jasny błękit teł
+                        'light-alt': '#eff6ff',
+                        gray: {
+                            500: '#64748b', // Szary tekst
+                            100: '#f1f5f9'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+                        display: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px rgba(30,64,175,0.06)',
+                        'hover': '0 10px 25px rgba(30,64,175,0.12)',
+                        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.07)'
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background: #ffffff;
+            color: #0f172a;
+            letter-spacing: -0.01em;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            letter-spacing: -0.03em;
+        }
+
+        button, .nav-link, .font-ui {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            letter-spacing: -0.01em;
+        }
+
+        .section-balanced {
+            padding-top: clamp(4.5rem, 8vw, 7.5rem);
+            padding-bottom: clamp(4.5rem, 8vw, 7.5rem);
+        }
+
+        .hero-balanced {
+            min-height: clamp(640px, 92vh, 980px);
+            display: flex;
+            align-items: center;
+        }
+
+        .section-reveal {
+            opacity: 0.08;
+            transform: translateY(38px) scale(0.992);
+            filter: blur(2px);
+            transition: opacity 0.75s ease, transform 0.75s ease, filter 0.75s ease;
+            will-change: opacity, transform, filter;
+        }
+
+        .section-reveal.is-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .section-reveal {
+                opacity: 1;
+                transform: none;
+                filter: none;
+                transition: none;
+            }
+        }
+
+        /* Ukrywanie paska przewijania dla karuzeli mobilnych */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Glassmorphism utilities */
+        .glass {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+        }
+
+        .text-gradient {
+            color: #0f172a;
+        }
+
+        /* Nav Link Active State */
+        .nav-link.active {
+            position: relative;
+            color: #0f172a;
+            font-weight: 500;
+        }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+            width: 100%;
+            height: 2px;
+            background-color: #2563eb;
+            border-radius: 2px;
+        }
+
+        .nav-link:hover {
+            color: #2563eb;
+        }
+
+        /* Stylizacja 3D Laptopa */
+        .laptop-container {
+            perspective: 1000px;
+        }
+        .laptop-screen {
+            transform: rotateX(5deg) rotateY(-10deg) rotateZ(2deg);
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+        .laptop-container:hover .laptop-screen {
+            transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+        }
+
+        .lab-screen {
+            --mx: 0.5;
+            --my: 0.5;
+            position: relative;
+            background: #0b0d11;
+            border: 1px solid #2a2f3a;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+        }
+
+        .lab-screen::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(
+                280px circle at calc(var(--mx) * 100%) calc(var(--my) * 100%),
+                rgba(37, 99, 235, 0.18),
+                rgba(15, 23, 42, 0) 65%
+            );
+            opacity: 0.85;
+            transition: opacity 0.2s ease;
+        }
+
+        .lab-cursor {
+            display: inline-block;
+            width: 1px;
+            height: 0.95em;
+            background: #93c5fd;
+            vertical-align: -0.1em;
+            animation: blink 1.1s step-end infinite;
+        }
+
+        .lab-code-line.active {
+            background: rgba(37, 99, 235, 0.15);
+            color: #e2e8f0;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        #contact-modal[data-open="true"] [data-modal-panel] {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="font-sans overflow-x-hidden">
+
+    <!-- 1. NAGŁÓWEK -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/95 border-b border-gray-100 shadow-sm transition-all duration-300" id="header">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex items-center gap-3 cursor-pointer">
+                    <img src="logo vm.png" alt="Vanta Media" class="h-10 w-auto object-contain">
+                </div>
+
+                <!-- Desktop Menu -->
+                <nav class="hidden lg:flex items-center gap-8">
+                    <a href="#start" class="nav-link active text-sm transition-colors">Strona główna</a>
+                    <a href="uslugi.html" class="nav-link text-gray-500 text-sm transition-colors">Usługi</a>
+                    <a href="#portfolio" class="nav-link text-gray-500 text-sm transition-colors">Portfolio</a>
+                    <a href="#blog" class="nav-link text-gray-500 text-sm transition-colors">Blog</a>
+                    <a href="#onas" class="nav-link text-gray-500 text-sm transition-colors">O nas</a>
+                    <a href="#kontakt" class="nav-link text-gray-500 text-sm transition-colors">Kontakt</a>
+                </nav>
+
+                <!-- CTA & Mobile Toggle -->
+                <div class="flex items-center gap-4">
+                    <a href="#wycena" data-contact-open class="hidden md:flex items-center gap-2 bg-black text-white px-5 py-2.5 rounded-md text-sm font-medium transition-colors duration-300 hover:bg-neutral-900">
+                        Bezpłatna wycena <i class="ph ph-arrow-up-right text-lg"></i>
+                    </a>
+                    <button class="lg:hidden text-navy-dark focus:outline-none" id="mobile-menu-btn">
+                        <i class="ph ph-list text-3xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu (ukryte domyślnie) -->
+        <div class="lg:hidden hidden bg-white absolute w-full left-0 shadow-xl border-t border-gray-100" id="mobile-menu">
+            <div class="flex flex-col px-6 pt-4 pb-8 space-y-2 bg-white/80 backdrop-blur-md rounded-b-2xl">
+                <a href="#start" class="text-navy-dark font-bold px-4 py-3 rounded-md bg-light-alt text-lg shadow-sm">Strona główna</a>
+                <a href="uslugi.html" class="text-gray-600 font-medium px-4 py-3 hover:text-primary transition-colors text-lg">Usługi</a>
+                <a href="#portfolio" class="text-gray-600 font-medium px-4 py-3 hover:text-primary transition-colors text-lg">Portfolio</a>
+                <a href="#blog" class="text-gray-600 font-medium px-4 py-3 hover:text-primary transition-colors text-lg">Blog</a>
+                <a href="#onas" class="text-gray-600 font-medium px-4 py-3 hover:text-primary transition-colors text-lg">O nas</a>
+                <a href="#kontakt" class="text-gray-600 font-medium px-4 py-3 hover:text-primary transition-colors text-lg">Kontakt</a>
+                <a href="#wycena" data-contact-open class="flex items-center justify-center gap-2 bg-transparent border border-gray-200 text-gray-900 px-6 py-4 rounded-md text-base font-medium mt-4 transition-colors duration-300 hover:bg-[#16161d] hover:text-white hover:border-[#16161d]">
+                    Bezpłatna wycena <i class="ph ph-arrow-up-right"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2. SEKCJA HERO -->
+    <section id="start" class="scroll-mt-24 sm:scroll-mt-28 pt-28 pb-16 lg:pt-40 lg:pb-24 overflow-hidden relative hero-balanced section-reveal is-visible">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col xl:flex-row items-center gap-12 xl:gap-8">
+                
+                <!-- Lewa kolumna (Tekst) -->
+                <div class="w-full xl:w-[45%] z-10 relative flex flex-col items-center text-center xl:items-start xl:text-left">
+                    <p class="text-slate-500 text-xs sm:text-sm font-medium tracking-[0.12em] uppercase mb-6">
+                        ROZWIĄZANIA PROGRAMISTYCZNE DLA BIZNESÓW
+                    </p>
+                    
+                    <h1 class="text-4xl sm:text-5xl lg:text-[56px] leading-[1.15] sm:leading-[1.1] font-bold text-navy-dark mb-5 sm:mb-6">
+                        Strony, które pracują na <br class="hidden xl:block"/> <span class="text-gradient">Twój sukces</span>
+                    </h1>
+                    
+                    <p class="text-gray-500 text-base sm:text-lg md:text-xl leading-relaxed mb-8 max-w-lg mx-auto lg:mx-0">
+                        Projektujemy i wdrażamy systemy webowe, które działają szybko pod obciążeniem, skalują się bez bólu i zamieniają technologię w realny wynik biznesowy.
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row items-center justify-center xl:justify-start gap-4 w-full sm:w-auto">
+                        <a href="#portfolio" class="w-full sm:w-auto flex justify-center items-center gap-2 bg-black text-white px-7 py-4 sm:py-3.5 rounded-md font-medium transition-colors duration-300 hover:bg-neutral-900">
+                            Zobacz nasze projekty <i class="ph ph-arrow-up-right text-lg"></i>
+                        </a>
+                        <a href="#kontakt" data-contact-open class="w-full sm:w-auto flex justify-center items-center gap-2 bg-transparent border border-gray-200 text-gray-900 px-7 py-4 sm:py-3.5 rounded-md font-medium transition-colors duration-300 hover:bg-[#16161d] hover:text-white hover:border-[#16161d]">
+                            Bezpłatna wycena <i class="ph ph-chat-circle text-lg"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Prawa kolumna (Grafika) -->
+                <div class="w-full xl:w-[55%] relative laptop-container flex justify-center mt-6 xl:mt-0 px-2 sm:px-0">
+                    <!-- CSS Laptop Mockup -->
+                    <div class="laptop-screen relative w-full max-w-[340px] sm:max-w-[500px] lg:max-w-[600px] z-10">
+                        <!-- Obudowa ekranu -->
+                        <div class="w-full aspect-[16/10] bg-gray-900 rounded-t-xl sm:rounded-t-2xl border-[8px] sm:border-[12px] border-gray-800 shadow-2xl relative overflow-hidden flex items-center justify-center">
+                            <!-- Interaktywny mini lab technologiczny -->
+                            <div data-lab-screen class="lab-screen relative z-10 w-[94%] h-[88%] rounded-md overflow-hidden text-[10px] sm:text-xs text-slate-300">
+                                <div class="h-7 sm:h-8 border-b border-slate-700/80 px-3 flex items-center justify-between bg-[#0f1218]">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-red-400/80"></span>
+                                        <span class="w-2 h-2 rounded-full bg-amber-400/80"></span>
+                                        <span class="w-2 h-2 rounded-full bg-emerald-400/80"></span>
+                                    </div>
+                                    <div class="text-[9px] sm:text-[10px] tracking-wide text-slate-400 uppercase">runtime-lab.tsx</div>
+                                    <span id="lab-status" class="text-[9px] sm:text-[10px] text-emerald-300">synced</span>
+                                </div>
+
+                                <div class="grid grid-cols-2 h-[calc(100%-2rem)] sm:h-[calc(100%-2.25rem)]">
+                                    <div class="border-r border-slate-700/70 p-2 sm:p-3 font-mono text-[9px] sm:text-[11px] leading-relaxed text-slate-400" data-parallax="9">
+                                        <div class="lab-code-line active px-2 py-0.5 rounded cursor-pointer" data-code-line>const pipeline = boot(app);</div>
+                                        <div class="lab-code-line px-2 py-0.5 rounded cursor-pointer" data-code-line>pipeline.cache("edge", 95);</div>
+                                        <div class="lab-code-line px-2 py-0.5 rounded cursor-pointer" data-code-line>pipeline.observe(metrics);</div>
+                                        <div class="lab-code-line px-2 py-0.5 rounded cursor-pointer" data-code-line>deploy.region("eu-central-1");</div>
+                                        <div class="mt-2 px-2 text-slate-300">status: <span id="lab-line-preview">runtime stable</span><span class="lab-cursor ml-1"></span></div>
+                                    </div>
+
+                                    <div class="p-2 sm:p-3 flex flex-col gap-2" data-parallax="14">
+                                        <div class="border border-slate-700/70 rounded-md p-2">
+                                            <button type="button" class="w-full flex items-center justify-between text-left text-slate-200" data-node-toggle>
+                                                <span class="font-semibold">DOM /app-root</span>
+                                                <span class="text-slate-500 text-[9px] sm:text-[10px]">toggle</span>
+                                            </button>
+                                            <div class="mt-1 pl-2 border-l border-slate-700/60 space-y-1 text-[9px] sm:text-[10px] text-slate-400" data-node-children>
+                                                <div>&lt;header /&gt;</div>
+                                                <div>&lt;main id="hero" /&gt;</div>
+                                                <div>&lt;section id="portfolio" /&gt;</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="border border-slate-700/70 rounded-md p-2">
+                                            <div class="flex justify-between text-[9px] sm:text-[10px] mb-1 text-slate-400">
+                                                <span>Latency</span>
+                                                <span id="metric-latency">22ms</span>
+                                            </div>
+                                            <div class="h-1.5 bg-slate-800 rounded overflow-hidden">
+                                                <div id="metric-latency-bar" class="h-full bg-blue-400 rounded transition-all duration-150" style="width: 36%;"></div>
+                                            </div>
+                                            <div class="flex justify-between text-[9px] sm:text-[10px] mt-2 mb-1 text-slate-400">
+                                                <span>CPU Load</span>
+                                                <span id="metric-cpu">41%</span>
+                                            </div>
+                                            <div class="h-1.5 bg-slate-800 rounded overflow-hidden">
+                                                <div id="metric-cpu-bar" class="h-full bg-emerald-400 rounded transition-all duration-150" style="width: 41%;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Baza laptopa -->
+                        <div class="w-[115%] -ml-[7.5%] h-3 sm:h-5 bg-gray-400 rounded-b-lg sm:rounded-b-xl shadow-xl relative z-20 flex justify-center border-t border-gray-300">
+                            <!-- Wcięcie na palec -->
+                            <div class="w-16 sm:w-24 h-1 sm:h-1.5 bg-gray-600 rounded-b-md"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 4. SEKCJA USŁUGI -->
+    <section id="uslugi" class="scroll-mt-24 sm:scroll-mt-28 bg-[#f5f5f7] section-balanced section-reveal">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-navy-dark mb-4">Usługi</h2>
+                <p class="text-gray-500 text-lg">Architektura i wdrożenia, które dają przewagę technologiczną</p>
+            </div>
+
+            <div class="max-w-5xl mx-auto px-3 sm:px-4 lg:px-6">
+                <p class="text-gray-500 text-base sm:text-lg leading-relaxed mb-12">
+                    Od decyzji architektonicznych po produkcję: budujemy produkty, które są szybkie, stabilne i gotowe na wzrost ruchu oraz skali biznesu.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10">
+                    <div class="border-b border-neutral-200 pb-6">
+                        <h3 class="text-lg sm:text-xl font-bold text-navy-dark mb-2.5">Strategia produktu</h3>
+                        <p class="text-gray-500">Kierunek, który skraca drogę od pomysłu do wdrożenia i eliminuje kosztowne zwroty.</p>
+                    </div>
+                    <div class="border-b border-neutral-200 pb-6">
+                        <h3 class="text-lg sm:text-xl font-bold text-navy-dark mb-2.5">Full-stack</h3>
+                        <p class="text-gray-500">Front-end i back-end zaprojektowane pod wydajność, stabilność i długoterminowe utrzymanie.</p>
+                    </div>
+                    <div class="border-b border-neutral-200 pb-6 md:border-b-0">
+                        <h3 class="text-lg sm:text-xl font-bold text-navy-dark mb-2.5">Integracje</h3>
+                        <p class="text-gray-500">API i automatyzacje, które spinają sprzedaż, operacje i analitykę w jeden system.</p>
+                    </div>
+                    <div class="md:border-b-0">
+                        <h3 class="text-lg sm:text-xl font-bold text-navy-dark mb-2.5">Opieka po wdrożeniu</h3>
+                        <p class="text-gray-500">Monitoring, iteracje i rozwój, który utrzymuje przewagę po starcie projektu.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. SEKCJA PORTFOLIO (WKRÓTCE) -->
+    <section id="portfolio" class="scroll-mt-24 sm:scroll-mt-28 bg-white section-balanced section-reveal">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-row justify-between items-end sm:items-center mb-8 sm:mb-12 gap-4">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-navy-dark">Portfolio</h2>
+            </div>
+
+            <div class="relative group">
+                <button data-portfolio-prev class="absolute -left-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-md bg-white shadow-md items-center justify-center text-navy hover:text-primary z-10 hover:scale-110 transition-transform hidden">
+                    <i class="ph ph-caret-left text-xl"></i>
+                </button>
+                <button data-portfolio-next class="absolute -right-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-md bg-white shadow-md items-center justify-center text-navy hover:text-primary z-10 hover:scale-110 transition-transform hidden">
+                    <i class="ph ph-caret-right text-xl"></i>
+                </button>
+
+                <div data-portfolio-track class="w-full max-w-6xl mx-auto">
+                    <article class="w-full bg-white border border-gray-200 rounded-lg p-6 sm:p-8 lg:p-10">
+                        <div class="grid grid-cols-1 md:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] gap-8 md:gap-10 items-start">
+                            <div class="aspect-[16/10] rounded-md overflow-hidden border border-gray-200 bg-[#f5f5f7]">
+                                <img src="C:/Users/Michał/.cursor/projects/g-M-j-dysk-Vanta-Vanta-Media/assets/g__M_j_dysk_Vanta_Vanta_Media_arciech.png" alt="Podgląd strony arciechow.pl" class="w-full h-full object-cover object-center">
+                            </div>
+
+                            <div>
+                                <div class="flex flex-wrap items-start justify-between gap-3 mb-5">
+                                    <div>
+                                        <p class="text-[11px] sm:text-xs uppercase tracking-[0.12em] text-gray-500 mb-2">Wdrożenie opublikowane</p>
+                                        <h3 class="text-xl sm:text-2xl font-bold text-navy-dark">Arciechów</h3>
+                                    </div>
+                                    <a href="https://arciechow.pl" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary-dark font-semibold">
+                                        arciechow.pl <i class="ph ph-arrow-up-right"></i>
+                                    </a>
+                                </div>
+                                <p class="text-gray-500 mb-6">
+                                    Strona internetowa Arciechowa została wykonana na zlecenie osoby prywatnej. Projekt objął pełny proces: koncepcję, projekt wizualny, wdrożenie oraz przygotowanie zaplecza do samodzielnego zarządzania treścią.
+                                </p>
+                                <ul class="space-y-2.5 text-sm text-gray-600 mb-6">
+                                    <li>• Zaprojektowane i wdrożone logo marki</li>
+                                    <li>• Dedykowany panel administracyjny</li>
+                                    <li>• Zarządzanie artykułami oraz danymi na stronie</li>
+                                </ul>
+                                <div class="flex flex-wrap gap-3 text-xs">
+                                    <span class="px-3 py-1.5 rounded-md bg-gray-100 text-gray-700 inline-flex items-center gap-1.5">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" class="w-3.5 h-3.5" fill="currentColor" aria-hidden="true">
+                                            <path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM48,48H72v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48ZM208,208H48V96H208V208Z"></path>
+                                        </svg>
+                                        Start: marzec 2026
+                                    </span>
+                                    <span class="px-3 py-1.5 rounded-md bg-gray-100 text-gray-700 inline-flex items-center gap-1.5">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" class="w-3.5 h-3.5" fill="currentColor" aria-hidden="true">
+                                            <path d="M247.31,124.76c-.35-.79-8.82-19.58-27.94-38.71C193.08,59.75,160.42,44,128,44S62.92,59.75,36.63,86.05C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.48c.35.79,8.82,19.58,27.94,38.71C62.92,196.25,95.58,212,128,212s65.08-15.75,91.37-42.05c19.12-19.13,27.59-37.92,27.94-38.71A8,8,0,0,0,247.31,124.76ZM128,172a44,44,0,1,1,44-44A44,44,0,0,1,128,172Zm0-72a28,28,0,1,0,28,28A28,28,0,0,0,128,100Z"></path>
+                                        </svg>
+                                        20 000 widzów / Q1
+                                    </span>
+                                    <span class="px-3 py-1.5 rounded-md bg-gray-100 text-gray-700 inline-flex items-center gap-1.5">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" class="w-3.5 h-3.5" fill="currentColor" aria-hidden="true">
+                                            <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm45.66,85.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z"></path>
+                                        </svg>
+                                        Status: aktywna
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. SEKCJA O NAS -->
+    <section id="onas" class="scroll-mt-24 sm:scroll-mt-28 bg-[#f5f5f7] section-balanced section-reveal">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-3xl mx-auto text-center">
+                <h2 id="onas-tytul" class="text-2xl sm:text-3xl md:text-4xl font-bold text-navy-dark mb-4 sm:mb-5">Technologia bez kompromisów</h2>
+                <p class="text-gray-500 text-base sm:text-lg leading-relaxed mb-8">
+                    Nie sprzedajemy ozdobników. Dostarczamy precyzyjnie zaprojektowane rozwiązania, które przyspieszają działanie firmy i wytrzymują realne obciążenie.
+                </p>
+                <a href="#wycena" data-contact-open class="inline-flex items-center gap-2 bg-navy-dark text-white hover:bg-primary px-6 py-3 rounded-md font-semibold shadow-sm transition-colors duration-300">
+                    Zbudujmy przewagę <i class="ph ph-arrow-up-right text-lg"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. SEKCJA BLOG -->
+    <section id="blog" class="scroll-mt-24 sm:scroll-mt-28 bg-white section-balanced section-reveal">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-row justify-between items-end sm:items-center mb-10 sm:mb-14 gap-4">
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-navy-dark">Artykuły</h2>
+                <span class="hidden sm:inline-flex items-center text-sm text-gray-500">Wkrótce kolejne wpisy</span>
+            </div>
+
+            <div class="max-w-6xl mx-auto mt-12 sm:mt-16 grid grid-cols-1 gap-5 sm:gap-6">
+                <article class="bg-white border border-gray-100 rounded-lg shadow-soft p-7 sm:p-9">
+                    <div class="w-full h-40 sm:h-48 rounded-md overflow-hidden border border-gray-200 mb-5 bg-gray-100">
+                        <img src="artykuły/17 maja 2026/zdjęcie 1.webp" alt="Zdjęcie artykułu o błędach na stronach firmowych" class="w-full h-full object-cover">
+                    </div>
+                    <p class="text-sm text-gray-400 mb-3">Opublikowano: 31 maja 2026</p>
+                    <a href="blog-jak-zaprojektowac-strone-ktora-konwertuje.html" class="group inline-flex items-center gap-2 text-navy-dark hover:text-primary transition-colors">
+                        <h3 class="text-xl sm:text-2xl font-bold">10 kardynalnych błędów polskich przedsiębiorców, które trzymają ich stronę w erze kamiennej</h3>
+                        <i class="ph ph-arrow-up-right text-lg opacity-60 group-hover:opacity-100 transition-opacity"></i>
+                    </a>
+                    <p class="text-gray-500 mt-3 text-base sm:text-lg">Strona internetowa to pierwsza rozmowa sprzedażowa - i nie może kończyć się po kilku sekundach.</p>
+                </article>
+            </div>
+            
+            <div class="mt-4 flex justify-center sm:hidden">
+                <span class="inline-flex items-center gap-2 text-sm text-gray-500 px-6 py-3">Wkrótce kolejne wpisy</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. SEKCJA CTA BANER -->
+    <section id="wycena" class="scroll-mt-24 sm:scroll-mt-28 bg-white px-4 sm:px-6 lg:px-8 pt-12 sm:pt-14 pb-6 sm:pb-8 section-reveal">
+        <div class="max-w-7xl mx-auto rounded-lg overflow-hidden relative shadow-xl bg-[#16161d]" style="background:
+            radial-gradient(120% 140% at 8% 2%, rgba(92, 127, 255, 0.48) 0%, rgba(92, 127, 255, 0) 54%),
+            radial-gradient(105% 130% at 94% 12%, rgba(32, 72, 215, 0.52) 0%, rgba(32, 72, 215, 0) 56%),
+            radial-gradient(118% 145% at 48% 98%, rgba(18, 40, 124, 0.62) 0%, rgba(18, 40, 124, 0) 62%),
+            linear-gradient(135deg, #0b1022 0%, #111a3c 45%, #0f1f55 100%);">
+            
+            <!-- Duże logo z boku -->
+            <div data-cta-logo="true" class="absolute -right-4 -bottom-10 sm:-right-10 sm:-bottom-16 pointer-events-none">
+                <img src="LOGO VM MINI.png" alt="" aria-hidden="true" class="w-[220px] sm:w-[360px] h-auto object-contain mix-blend-screen opacity-[0.14]" style="filter: grayscale(1) brightness(3.2) contrast(1.35) drop-shadow(0 10px 18px rgba(0, 0, 0, 0.2));">
+            </div>
+
+            <div class="relative z-10 px-6 py-12 sm:px-8 sm:py-16 md:px-16 md:py-20 flex flex-col items-center justify-center gap-8 sm:gap-10 text-center">
+                <div class="max-w-2xl">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">
+                        Gotowy na produkt, który wyprzedza konkurencję?
+                    </h2>
+                    <p class="text-neutral-400 text-base sm:text-lg">
+                        Uszyjemy na miarę rozwiązanie dla Twojej firmy, które działa szybciej, skaluje się lepiej i daje przewagę na rynku
+                    </p>
+                </div>
+                <div class="flex-shrink-0 w-full sm:w-auto">
+                    <button type="button" data-contact-open class="w-full sm:w-auto justify-center bg-transparent border border-white/20 text-white hover:bg-white hover:text-black px-8 py-4 rounded-md font-bold transition-colors flex items-center gap-2">
+                        Start projektu <i class="ph ph-arrow-up-right text-lg"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 10. STOPKA -->
+    <footer id="kontakt" class="scroll-mt-24 sm:scroll-mt-28 border-t border-gray-100">
+        <div class="bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-7">
+                <div class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-14">
+                    <a href="tel:+48667337155" class="text-xl sm:text-2xl font-semibold text-black hover:text-primary transition-colors">
+                        +48 667 337 155
+                    </a>
+                    <a href="mailto:kontakt@vantamedia.pl" class="text-xl sm:text-2xl font-semibold text-black hover:text-primary transition-colors break-all text-center md:text-left">
+                        kontakt@vantamedia.pl
+                    </a>
+                    <div class="flex items-center gap-5 text-2xl">
+                        <a href="#" class="text-black hover:text-primary transition-colors" aria-label="Instagram">
+                            <i class="ph ph-instagram-logo"></i>
+                        </a>
+                        <a href="#" class="text-black hover:text-primary transition-colors" aria-label="Facebook">
+                            <i class="ph ph-facebook-logo"></i>
+                        </a>
+                        <a href="#" class="text-black hover:text-primary transition-colors" aria-label="LinkedIn">
+                            <i class="ph ph-linkedin-logo"></i>
+                        </a>
+                        <a href="#" class="text-black hover:text-primary transition-colors" aria-label="X">
+                            <i class="ph ph-x-logo"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-[#2f3338]">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5 relative flex items-center justify-center">
+                <p class="text-[11px] sm:text-xs text-gray-400 tracking-[0.08em] uppercase text-center">
+                    Vanta Media | Wszelkie prawa zastrzeżone, <span id="current-year">2024</span>
+                </p>
+                <a href="#start" class="absolute right-4 sm:right-6 inline-flex items-center justify-center w-10 h-10 rounded-full bg-black text-white hover:bg-neutral-900 transition-colors" aria-label="Wróć na górę">
+                    <i class="ph ph-caret-up text-xl"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <div id="contact-modal" data-open="false" class="fixed inset-0 z-[90] bg-black/55 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="min-h-full w-full px-3 py-3 sm:px-4 sm:py-6 flex items-center justify-center">
+            <div data-modal-panel class="relative w-full max-w-3xl max-h-[calc(100dvh-1.5rem)] sm:max-h-[calc(100dvh-3rem)] overflow-y-auto bg-white border border-gray-100 rounded-2xl shadow-xl transform translate-y-4 opacity-0 transition-all duration-300">
+                <button type="button" data-contact-close aria-label="Zamknij formularz" class="absolute top-4 right-4 inline-flex items-center justify-center w-10 h-10 rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors z-10">
+                    <i class="ph ph-x text-2xl"></i>
+                </button>
+                <div class="grid grid-cols-1 md:grid-cols-2">
+                    <div class="bg-slate-50 px-5 py-6 sm:px-6 sm:py-7">
+                        <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">Zacznijmy współpracę 🤝</h2>
+                        <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-6">
+                            Zadzwoń, napisz lub wyślij krótką wiadomość. Wracamy z odpowiedzią tak szybko, jak to możliwe.
+                        </p>
+                        <div class="space-y-2.5 mb-6">
+                            <a href="tel:+48667337155" class="block text-2xl sm:text-[28px] leading-tight font-bold text-[#0d57a0] hover:text-[#084b8c] transition-colors">+48 667 337 155</a>
+                            <a href="mailto:kontakt@vantamedia.pl" class="block text-lg sm:text-xl leading-tight font-bold text-[#0d57a0] hover:text-[#084b8c] transition-colors break-all">kontakt@vantamedia.pl</a>
+                        </div>
+                        <div class="flex items-center gap-5 text-2xl">
+                            <a href="#" class="text-black hover:text-primary transition-colors" aria-label="Instagram"><i class="ph ph-instagram-logo"></i></a>
+                            <a href="#" class="text-black hover:text-primary transition-colors" aria-label="Facebook"><i class="ph ph-facebook-logo"></i></a>
+                            <a href="#" class="text-black hover:text-primary transition-colors" aria-label="LinkedIn"><i class="ph ph-linkedin-logo"></i></a>
+                            <a href="#" class="text-black hover:text-primary transition-colors" aria-label="X"><i class="ph ph-x-logo"></i></a>
+                        </div>
+                    </div>
+                    <div class="px-5 py-6 sm:px-6 sm:py-7">
+                        <form id="contact-modal-form" class="space-y-4">
+                            <label class="block">
+                                <span class="text-slate-500 text-sm">Imię i nazwisko *</span>
+                                <input type="text" name="name" required class="mt-1.5 w-full border-0 border-b border-slate-300 focus:border-slate-500 focus:ring-0 px-0 py-2 text-slate-900" />
+                            </label>
+                            <label class="block">
+                                <span class="text-slate-500 text-sm">Telefon *</span>
+                                <input type="tel" name="phone" required class="mt-1.5 w-full border-0 border-b border-slate-300 focus:border-slate-500 focus:ring-0 px-0 py-2 text-slate-900" />
+                            </label>
+                            <label class="block">
+                                <span class="text-slate-500 text-sm">E-mail *</span>
+                                <input type="email" name="email" required class="mt-1.5 w-full border-0 border-b border-slate-300 focus:border-slate-500 focus:ring-0 px-0 py-2 text-slate-900" />
+                            </label>
+                            <label class="block">
+                                <span class="text-slate-500 text-sm">Opis projektu</span>
+                                <textarea name="description" rows="3" class="mt-1.5 w-full rounded-xl border border-slate-300 focus:border-slate-500 focus:ring-0 px-3.5 py-2.5 text-slate-900 resize-y" placeholder="Opisz krótko, czego potrzebujesz"></textarea>
+                            </label>
+                            <button type="submit" class="inline-flex items-center justify-center bg-[#0d57a0] text-white px-7 py-3 rounded-xl font-bold tracking-wide hover:bg-[#084b8c] transition-colors">
+                                WYŚLIJ
+                            </button>
+                            <p id="contact-modal-success" class="hidden text-sm text-emerald-600 font-medium">
+                                Dziękujemy! Wiadomość została wysłana. Skontaktujemy się z Tobą najszybciej jak to możliwe.
+                            </p>
+                            <p id="contact-modal-error" class="hidden text-sm text-red-600 font-medium">
+                                Nie udało się wysłać wiadomości. Spróbuj ponownie lub napisz na kontakt@vantamedia.pl.
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Skrypt do obsługi menu mobilnego i efektu sticky header -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const header = document.getElementById('header');
+            const currentYear = document.getElementById('current-year');
+            const contactModal = document.getElementById('contact-modal');
+            const contactModalPanel = contactModal ? contactModal.querySelector('[data-modal-panel]') : null;
+            const contactForm = document.getElementById('contact-modal-form');
+            const contactSuccess = document.getElementById('contact-modal-success');
+            const contactError = document.getElementById('contact-modal-error');
+            const contactTriggers = document.querySelectorAll('[data-contact-open]');
+            const contactCloseButtons = document.querySelectorAll('[data-contact-close]');
+
+            if (currentYear) {
+                currentYear.textContent = String(new Date().getFullYear());
+            }
+
+            // Toggle mobilnego menu
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Zamknij menu po kliknięciu w link
+            const mobileLinks = mobileMenu.querySelectorAll('a');
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                });
+            });
+
+            const openContactModal = event => {
+                if (event) event.preventDefault();
+                if (!contactModal || !contactModalPanel) return;
+                contactModal.dataset.open = 'true';
+                contactModal.classList.remove('opacity-0', 'pointer-events-none');
+                document.body.classList.add('overflow-hidden');
+                mobileMenu.classList.add('hidden');
+                if (contactSuccess) contactSuccess.classList.add('hidden');
+                if (contactError) contactError.classList.add('hidden');
+                requestAnimationFrame(() => {
+                    contactModalPanel.classList.remove('translate-y-4', 'opacity-0');
+                });
+                setTimeout(() => {
+                    const firstInput = contactModal.querySelector('input, textarea');
+                    if (firstInput) firstInput.focus();
+                }, 80);
+            };
+
+            const closeContactModal = () => {
+                if (!contactModal || !contactModalPanel) return;
+                contactModal.dataset.open = 'false';
+                contactModalPanel.classList.add('translate-y-4', 'opacity-0');
+                contactModal.classList.add('opacity-0', 'pointer-events-none');
+                document.body.classList.remove('overflow-hidden');
+            };
+
+            contactTriggers.forEach(trigger => {
+                trigger.addEventListener('click', openContactModal);
+            });
+
+            contactCloseButtons.forEach(button => {
+                button.addEventListener('click', closeContactModal);
+            });
+
+            if (contactModal) {
+                contactModal.addEventListener('click', event => {
+                    if (event.target === contactModal) {
+                        closeContactModal();
+                    }
+                });
+            }
+
+            document.addEventListener('keydown', event => {
+                if (event.key === 'Escape' && contactModal && contactModal.dataset.open === 'true') {
+                    closeContactModal();
+                }
+            });
+
+            if (contactForm) {
+                const contactSubmitButton = contactForm.querySelector('button[type="submit"]');
+
+                contactForm.addEventListener('submit', async event => {
+                    event.preventDefault();
+
+                    if (contactSuccess) contactSuccess.classList.add('hidden');
+                    if (contactError) contactError.classList.add('hidden');
+
+                    const formData = new FormData(contactForm);
+                    const payload = {
+                        name: String(formData.get('name') || '').trim(),
+                        phone: String(formData.get('phone') || '').trim(),
+                        email: String(formData.get('email') || '').trim(),
+                        description: String(formData.get('description') || '').trim()
+                    };
+
+                    if (contactSubmitButton) {
+                        contactSubmitButton.disabled = true;
+                        contactSubmitButton.classList.add('opacity-70', 'cursor-not-allowed');
+                        contactSubmitButton.textContent = 'WYSYŁANIE...';
+                    }
+
+                    try {
+                        const response = await fetch('/api/contact', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Contact form request failed');
+                        }
+
+                        contactForm.reset();
+                        if (contactSuccess) contactSuccess.classList.remove('hidden');
+                    } catch (error) {
+                        if (contactError) contactError.classList.remove('hidden');
+                    } finally {
+                        if (contactSubmitButton) {
+                            contactSubmitButton.disabled = false;
+                            contactSubmitButton.classList.remove('opacity-70', 'cursor-not-allowed');
+                            contactSubmitButton.textContent = 'WYŚLIJ';
+                        }
+                    }
+                });
+            }
+
+            // Efekt szkła/cienia na headerze przy scrollu
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 20) {
+                    header.classList.add('backdrop-blur-md', 'bg-white/80', 'shadow-sm');
+                    header.classList.remove('bg-transparent');
+                } else {
+                    header.classList.remove('backdrop-blur-md', 'bg-white/80', 'shadow-sm');
+                    header.classList.add('bg-transparent');
+                }
+            });
+
+            const revealSections = document.querySelectorAll('.section-reveal');
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && revealSections.length) {
+                const revealObserver = new IntersectionObserver(
+                    entries => {
+                        entries.forEach(entry => {
+                            entry.target.classList.toggle('is-visible', entry.isIntersecting);
+                        });
+                    },
+                    {
+                        root: null,
+                        rootMargin: '-8% 0px -8% 0px',
+                        threshold: [0.12, 0.28, 0.5]
+                    }
+                );
+
+                revealSections.forEach(section => revealObserver.observe(section));
+            } else {
+                revealSections.forEach(section => section.classList.add('is-visible'));
+            }
+
+            const labScreen = document.querySelector('[data-lab-screen]');
+            if (labScreen) {
+                const codeLines = labScreen.querySelectorAll('[data-code-line]');
+                const linePreview = document.getElementById('lab-line-preview');
+                const status = document.getElementById('lab-status');
+                const toggleButton = labScreen.querySelector('[data-node-toggle]');
+                const toggleChildren = labScreen.querySelector('[data-node-children]');
+                const latencyValue = document.getElementById('metric-latency');
+                const cpuValue = document.getElementById('metric-cpu');
+                const latencyBar = document.getElementById('metric-latency-bar');
+                const cpuBar = document.getElementById('metric-cpu-bar');
+                const parallaxLayers = labScreen.querySelectorAll('[data-parallax]');
+
+                codeLines.forEach(line => {
+                    line.addEventListener('click', () => {
+                        codeLines.forEach(item => item.classList.remove('active'));
+                        line.classList.add('active');
+                        if (linePreview) linePreview.textContent = line.textContent.trim();
+                        if (status) status.textContent = 'updated';
+                        setTimeout(() => {
+                            if (status) status.textContent = 'synced';
+                        }, 700);
+                    });
+                });
+
+                if (toggleButton && toggleChildren) {
+                    toggleButton.addEventListener('click', () => {
+                        toggleChildren.classList.toggle('hidden');
+                    });
+                }
+
+                const updateLabWithPointer = (clientX, clientY) => {
+                    const x = Math.min(Math.max(clientX / window.innerWidth, 0), 1);
+                    const y = Math.min(Math.max(clientY / window.innerHeight, 0), 1);
+
+                    labScreen.style.setProperty('--mx', x.toFixed(3));
+                    labScreen.style.setProperty('--my', y.toFixed(3));
+
+                    const latency = Math.round(14 + x * 26 + y * 10);
+                    const cpu = Math.round(22 + x * 58);
+
+                    if (latencyValue) latencyValue.textContent = `${latency}ms`;
+                    if (cpuValue) cpuValue.textContent = `${cpu}%`;
+                    if (latencyBar) latencyBar.style.width = `${Math.min(100, latency)}%`;
+                    if (cpuBar) cpuBar.style.width = `${Math.min(100, cpu)}%`;
+
+                    parallaxLayers.forEach(layer => {
+                        const strength = Number(layer.dataset.parallax || 8);
+                        const tx = (x - 0.5) * strength;
+                        const ty = (y - 0.5) * strength;
+                        layer.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
+                    });
+                };
+
+                window.addEventListener('mousemove', event => {
+                    updateLabWithPointer(event.clientX, event.clientY);
+                });
+
+                window.addEventListener('touchmove', event => {
+                    if (!event.touches || !event.touches[0]) return;
+                    updateLabWithPointer(event.touches[0].clientX, event.touches[0].clientY);
+                }, { passive: true });
+
+                updateLabWithPointer(window.innerWidth * 0.64, window.innerHeight * 0.42);
+            }
+
+            const portfolioTrack = document.querySelector('[data-portfolio-track]');
+            const portfolioPrev = document.querySelector('[data-portfolio-prev]');
+            const portfolioNext = document.querySelector('[data-portfolio-next]');
+
+            if (portfolioTrack && portfolioPrev && portfolioNext) {
+                const togglePortfolioControls = () => {
+                    const hasOverflow = portfolioTrack.scrollWidth - portfolioTrack.clientWidth > 6;
+                    const atStart = portfolioTrack.scrollLeft <= 4;
+                    const atEnd = portfolioTrack.scrollLeft >= portfolioTrack.scrollWidth - portfolioTrack.clientWidth - 4;
+
+                    if (!hasOverflow) {
+                        portfolioPrev.classList.add('hidden');
+                        portfolioNext.classList.add('hidden');
+                        portfolioPrev.classList.remove('flex');
+                        portfolioNext.classList.remove('flex');
+                        return;
+                    }
+
+                    portfolioPrev.classList.toggle('hidden', atStart);
+                    portfolioNext.classList.toggle('hidden', atEnd);
+                    portfolioPrev.classList.toggle('flex', !atStart);
+                    portfolioNext.classList.toggle('flex', !atEnd);
+                };
+
+                portfolioPrev.addEventListener('click', () => {
+                    portfolioTrack.scrollBy({ left: -Math.round(portfolioTrack.clientWidth * 0.9), behavior: 'smooth' });
+                });
+
+                portfolioNext.addEventListener('click', () => {
+                    portfolioTrack.scrollBy({ left: Math.round(portfolioTrack.clientWidth * 0.9), behavior: 'smooth' });
+                });
+
+                portfolioTrack.addEventListener('scroll', togglePortfolioControls);
+                window.addEventListener('resize', togglePortfolioControls);
+                togglePortfolioControls();
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('footer [aria-label="Wróć na górę"]').forEach(button => button.remove());
+
+            if (!document.getElementById('floating-page-up')) {
+                const floatingButton = document.createElement('a');
+                floatingButton.id = 'floating-page-up';
+                floatingButton.href = document.getElementById('start') ? '#start' : '#';
+                floatingButton.className = 'fixed bottom-6 right-6 inline-flex items-center justify-center w-11 h-11 rounded-full bg-black text-white hover:bg-neutral-900 transition-colors z-50 shadow-lg';
+                floatingButton.setAttribute('aria-label', 'Wróć na górę');
+                floatingButton.innerHTML = '<i class="ph ph-caret-up text-xl"></i>';
+                document.body.appendChild(floatingButton);
+            }
+
+            const ctaPanel = document.querySelector('#wycena .max-w-7xl');
+            if (ctaPanel && !ctaPanel.querySelector('[data-cta-logo]')) {
+                const logoWrap = document.createElement('div');
+                logoWrap.className = 'absolute -right-4 -bottom-10 sm:-right-10 sm:-bottom-16 pointer-events-none';
+                logoWrap.setAttribute('data-cta-logo', 'true');
+                logoWrap.innerHTML = '<img src="LOGO VM MINI.png" alt="" aria-hidden="true" class="w-[220px] sm:w-[360px] h-auto object-contain mix-blend-screen opacity-[0.14]" style="filter: grayscale(1) brightness(3.2) contrast(1.35) drop-shadow(0 10px 18px rgba(0, 0, 0, 0.2));">';
+
+                const textWrap = ctaPanel.querySelector('.relative.z-10');
+                if (textWrap) ctaPanel.insertBefore(logoWrap, textWrap);
+            }
+        });
+    </script>
+</body>
+</html>
