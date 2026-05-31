@@ -32,7 +32,7 @@ function buildHtmlBody({ name, email, phone, description }) {
     `;
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     setCorsHeaders(res);
 
     if (req.method === 'OPTIONS') {
@@ -108,4 +108,4 @@ export default async function handler(req, res) {
     }
 
     return res.status(200).json({ ok: true });
-}
+};

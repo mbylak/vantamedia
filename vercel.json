@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/vantamedia_pl_landing_page.html"
+    }
+  ]
+}
