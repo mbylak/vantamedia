@@ -4,12 +4,21 @@
       "source": "/vantamedia_pl_landing_page.html",
       "destination": "/",
       "permanent": true
+    },
+    {
+      "source": "/:path((?!.*\\.).*)\\.html",
+      "destination": "/:path",
+      "permanent": true
     }
   ],
   "rewrites": [
     {
       "source": "/",
       "destination": "/vantamedia_pl_landing_page.html"
+    },
+    {
+      "source": "/:path((?!.*\\.).*)",
+      "destination": "/:path.html"
     }
   ]
 }
