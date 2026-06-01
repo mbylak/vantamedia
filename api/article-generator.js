@@ -11,6 +11,123 @@ function escapeHtml(value) {
         .replace(/'/g, '&#39;');
 }
 
+function renderInlineMarkdown(text) {
+    const escaped = escapeHtml(text);
+    return escaped
+        .replace(/`([^`]+)`/g, '<code class="px-1 py-0.5 rounded bg-slate-100 text-slate-800">$1</code>')
+        .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">$1</a>');
+}
+
+function markdownToHtml(markdown) {
+    const lines = String(markdown || '').replace(/\r\n/g, '\n').split('\n');
+    const blocks = [];
+
+    let paragraphBuffer = [];
+    let unorderedItems = [];
+    let orderedItems = [];
+
+    function flushParagraph() {
+        if (!paragraphBuffer.length) return;
+        const paragraphText = paragraphBuffer.join(' ').trim();
+        if (paragraphText) {
+            blocks.push(`<p>${renderInlineMarkdown(paragraphText)}</p>`);
+        }
+        paragraphBuffer = [];
+    }
+
+    function flushUnorderedList() {
+        if (!unorderedItems.length) return;
+        blocks.push(
+            `<ul class="list-disc pl-6 space-y-1">${unorderedItems
+                .map(item => `<li>${renderInlineMarkdown(item)}</li>`)
+                .join('')}</ul>`
+        );
+        unorderedItems = [];
+    }
+
+    function flushOrderedList() {
+        if (!orderedItems.length) return;
+        blocks.push(
+            `<ol class="list-decimal pl-6 space-y-1">${orderedItems
+                .map(item => `<li>${renderInlineMarkdown(item)}</li>`)
+                .join('')}</ol>`
+        );
+        orderedItems = [];
+    }
+
+    for (const rawLine of lines) {
+        const line = rawLine.trim();
+
+        if (!line) {
+            flushParagraph();
+            flushUnorderedList();
+            flushOrderedList();
+            continue;
+        }
+
+        const heading3 = line.match(/^###\s+(.+)$/);
+        const heading2 = line.match(/^##\s+(.+)$/);
+        const heading1 = line.match(/^#\s+(.+)$/);
+        const unordered = line.match(/^-+\s+(.+)$/);
+        const ordered = line.match(/^\d+\.\s+(.+)$/);
+        const quote = line.match(/^>\s+(.+)$/);
+
+        if (heading3 || heading2 || heading1 || quote) {
+            flushParagraph();
+            flushUnorderedList();
+            flushOrderedList();
+        }
+
+        if (heading1) {
+            blocks.push(`<h2 class="text-2xl font-bold text-slate-900 pt-2">${renderInlineMarkdown(heading1[1])}</h2>`);
+            continue;
+        }
+
+        if (heading2) {
+            blocks.push(`<h2 class="text-2xl font-bold text-slate-900 pt-2">${renderInlineMarkdown(heading2[1])}</h2>`);
+            continue;
+        }
+
+        if (heading3) {
+            blocks.push(`<h3 class="text-xl font-semibold text-slate-900 pt-2">${renderInlineMarkdown(heading3[1])}</h3>`);
+            continue;
+        }
+
+        if (quote) {
+            blocks.push(
+                `<blockquote class="border-l-4 border-slate-300 pl-4 py-1 text-slate-600 italic">${renderInlineMarkdown(quote[1])}</blockquote>`
+            );
+            continue;
+        }
+
+        if (unordered) {
+            flushParagraph();
+            flushOrderedList();
+            unorderedItems.push(unordered[1]);
+            continue;
+        }
+
+        if (ordered) {
+            flushParagraph();
+            flushUnorderedList();
+            orderedItems.push(ordered[1]);
+            continue;
+        }
+
+        flushUnorderedList();
+        flushOrderedList();
+        paragraphBuffer.push(line);
+    }
+
+    flushParagraph();
+    flushUnorderedList();
+    flushOrderedList();
+
+    return blocks.join('\n                ');
+}
+
 function toSlug(input) {
     return String(input || '')
         .toLowerCase()
@@ -53,17 +170,13 @@ function buildArticleHtml({
     imageUrl,
     imageAlt,
     intro,
-    paragraphs,
+    markdownBodyHtml,
     slug
 }) {
     const fullUrl = `https://vantamedia.pl/${slug}`;
     const twitterText = encodeUrl(title);
     const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeUrl(fullUrl)}`;
     const xUrl = `https://x.com/intent/tweet?url=${encodeUrl(fullUrl)}&text=${twitterText}`;
-
-    const paragraphsHtml = paragraphs
-        .map(paragraph => `<p>${escapeHtml(paragraph)}</p>`)
-        .join('\n                ');
 
     const introHtml = isNonEmptyString(intro)
         ? `\n            <p class="text-center text-base sm:text-lg text-gray-600 mb-4">${escapeHtml(intro.trim())}</p>`
@@ -120,7 +233,7 @@ function buildArticleHtml({
                 </a>
             </div>
             <div class="max-w-3xl mx-auto space-y-5 text-gray-700 leading-relaxed text-base sm:text-lg">
-                ${paragraphsHtml}
+                ${markdownBodyHtml}
             </div>
         </article>
     </main>
@@ -197,12 +310,8 @@ module.exports = async function handler(req, res) {
         return res.status(400).json({ error: 'Nie udało się wygenerować poprawnego sluga z tytułu.' });
     }
 
-    const paragraphs = String(body)
-        .split(/\n{2,}/)
-        .map(item => item.trim())
-        .filter(Boolean);
-
-    if (!paragraphs.length) {
+    const markdownBodyHtml = markdownToHtml(body);
+    if (!isNonEmptyString(markdownBodyHtml)) {
         return res.status(400).json({ error: 'Treść artykułu musi zawierać przynajmniej jeden akapit.' });
     }
 
@@ -214,7 +323,7 @@ module.exports = async function handler(req, res) {
         imageUrl: imageUrl.trim(),
         imageAlt: imageAlt.trim(),
         intro: isNonEmptyString(intro) ? intro.trim() : '',
-        paragraphs,
+        markdownBodyHtml,
         slug
     });
 

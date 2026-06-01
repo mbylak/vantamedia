@@ -65,14 +65,35 @@
                         <input id="image-alt" type="text" required class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2">
                     </label>
                 </div>
+                <div class="border border-slate-200 rounded-lg p-4 bg-slate-50">
+                    <label class="block">
+                        <span class="text-sm text-slate-600">Lub wgraj zdjęcie z pliku (JPG/PNG/WEBP)</span>
+                        <input id="image-file" type="file" accept="image/png,image/jpeg,image/webp" class="mt-2 block w-full text-sm">
+                    </label>
+                    <p class="text-xs text-slate-500 mt-2">Po wgraniu zdjęcie zostanie skompresowane do WebP i automatycznie wpisane do pola URL obrazka.</p>
+                    <img id="image-preview" alt="" class="hidden mt-3 max-h-52 rounded-lg border border-slate-200">
+                </div>
                 <label class="block">
                     <span class="text-sm text-slate-600">Lead pod nagłówkiem (opcjonalnie)</span>
                     <textarea id="intro" rows="2" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2"></textarea>
                 </label>
                 <label class="block">
-                    <span class="text-sm text-slate-600">Treść artykułu * (akapity oddzielaj pustą linią)</span>
+                    <span class="text-sm text-slate-600">Treść artykułu * (Markdown)</span>
+                    <div class="mt-2 flex flex-wrap gap-2">
+                        <button type="button" data-md-insert="# " class="text-xs border border-slate-300 rounded-md px-2 py-1 hover:bg-slate-50">Nagłówek H1</button>
+                        <button type="button" data-md-insert="## " class="text-xs border border-slate-300 rounded-md px-2 py-1 hover:bg-slate-50">Nagłówek H2</button>
+                        <button type="button" data-md-insert="### " class="text-xs border border-slate-300 rounded-md px-2 py-1 hover:bg-slate-50">Nagłówek H3</button>
+                        <button type="button" data-md-wrap="**" class="text-xs border border-slate-300 rounded-md px-2 py-1 hover:bg-slate-50">Pogrubienie</button>
+                        <button type="button" data-md-wrap="*" class="text-xs border border-slate-300 rounded-md px-2 py-1 hover:bg-slate-50">Kursywa</button>
+                        <button type="button" data-md-insert="- " class="text-xs border border-slate-300 rounded-md px-2 py-1 hover:bg-slate-50">Lista</button>
+                        <button type="button" data-md-insert="> " class="text-xs border border-slate-300 rounded-md px-2 py-1 hover:bg-slate-50">Cytat</button>
+                    </div>
                     <textarea id="body" rows="12" required class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2"></textarea>
                 </label>
+                <article class="border border-slate-200 rounded-lg p-4 bg-slate-50">
+                    <h3 class="text-sm font-semibold text-slate-700 mb-2">Podgląd Markdown</h3>
+                    <div id="markdown-preview" class="prose prose-slate max-w-none text-sm leading-relaxed"></div>
+                </article>
 
                 <div class="flex flex-wrap gap-3">
                     <button type="submit" id="generate-button" class="inline-flex items-center gap-2 bg-black text-white px-5 py-2.5 rounded-lg hover:bg-slate-900">
@@ -117,6 +138,166 @@
         const resultFile = document.getElementById('result-file');
         const articleHtml = document.getElementById('article-html');
         const blogCardHtml = document.getElementById('blog-card-html');
+        const markdownInput = document.getElementById('body');
+        const markdownPreview = document.getElementById('markdown-preview');
+        const imageFileInput = document.getElementById('image-file');
+        const imageUrlInput = document.getElementById('image-url');
+        const imageAltInput = document.getElementById('image-alt');
+        const imagePreview = document.getElementById('image-preview');
+
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function renderInlineMarkdown(text) {
+            return escapeHtml(text)
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+                .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+        }
+
+        function markdownToHtml(markdown) {
+            const lines = String(markdown || '').replace(/\r\n/g, '\n').split('\n');
+            const blocks = [];
+            let paragraph = [];
+            let ul = [];
+            let ol = [];
+
+            const flushParagraph = () => {
+                if (!paragraph.length) return;
+                blocks.push(`<p>${renderInlineMarkdown(paragraph.join(' '))}</p>`);
+                paragraph = [];
+            };
+
+            const flushUl = () => {
+                if (!ul.length) return;
+                blocks.push(`<ul>${ul.map(item => `<li>${renderInlineMarkdown(item)}</li>`).join('')}</ul>`);
+                ul = [];
+            };
+
+            const flushOl = () => {
+                if (!ol.length) return;
+                blocks.push(`<ol>${ol.map(item => `<li>${renderInlineMarkdown(item)}</li>`).join('')}</ol>`);
+                ol = [];
+            };
+
+            lines.forEach(raw => {
+                const line = raw.trim();
+                if (!line) {
+                    flushParagraph();
+                    flushUl();
+                    flushOl();
+                    return;
+                }
+
+                const h1 = line.match(/^#\s+(.+)$/);
+                const h2 = line.match(/^##\s+(.+)$/);
+                const h3 = line.match(/^###\s+(.+)$/);
+                const list = line.match(/^-+\s+(.+)$/);
+                const ordered = line.match(/^\d+\.\s+(.+)$/);
+                const quote = line.match(/^>\s+(.+)$/);
+
+                if (h1 || h2 || h3 || quote) {
+                    flushParagraph();
+                    flushUl();
+                    flushOl();
+                }
+
+                if (h1) {
+                    blocks.push(`<h2>${renderInlineMarkdown(h1[1])}</h2>`);
+                    return;
+                }
+                if (h2) {
+                    blocks.push(`<h3>${renderInlineMarkdown(h2[1])}</h3>`);
+                    return;
+                }
+                if (h3) {
+                    blocks.push(`<h4>${renderInlineMarkdown(h3[1])}</h4>`);
+                    return;
+                }
+                if (quote) {
+                    blocks.push(`<blockquote>${renderInlineMarkdown(quote[1])}</blockquote>`);
+                    return;
+                }
+                if (list) {
+                    flushParagraph();
+                    flushOl();
+                    ul.push(list[1]);
+                    return;
+                }
+                if (ordered) {
+                    flushParagraph();
+                    flushUl();
+                    ol.push(ordered[1]);
+                    return;
+                }
+
+                flushUl();
+                flushOl();
+                paragraph.push(line);
+            });
+
+            flushParagraph();
+            flushUl();
+            flushOl();
+            return blocks.join('\n');
+        }
+
+        function renderMarkdownPreview() {
+            markdownPreview.innerHTML = markdownToHtml(markdownInput.value || '');
+        }
+
+        function insertAtCursor(textarea, prefix, suffix = '') {
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selected = textarea.value.slice(start, end);
+            const replacement = `${prefix}${selected}${suffix}`;
+
+            textarea.value = `${textarea.value.slice(0, start)}${replacement}${textarea.value.slice(end)}`;
+            const cursorPos = start + replacement.length;
+            textarea.focus();
+            textarea.setSelectionRange(cursorPos, cursorPos);
+            renderMarkdownPreview();
+        }
+
+        async function fileToDataUrl(file) {
+            return await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(String(reader.result));
+                reader.onerror = () => reject(new Error('Nie udało się odczytać pliku.'));
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function optimizeImage(file) {
+            const dataUrl = await fileToDataUrl(file);
+            const image = new Image();
+            image.src = dataUrl;
+
+            await new Promise((resolve, reject) => {
+                image.onload = () => resolve();
+                image.onerror = () => reject(new Error('Nie udało się załadować obrazu.'));
+            });
+
+            const maxWidth = 1600;
+            const ratio = image.width > maxWidth ? maxWidth / image.width : 1;
+            const targetWidth = Math.round(image.width * ratio);
+            const targetHeight = Math.round(image.height * ratio);
+
+            const canvas = document.createElement('canvas');
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(image, 0, 0, targetWidth, targetHeight);
+
+            return canvas.toDataURL('image/webp', 0.82);
+        }
 
         function setStatus(message, isError = false) {
             statusText.textContent = message;
@@ -143,6 +324,40 @@
                     setStatus('Nie udało się skopiować do schowka.', true);
                 }
             });
+        });
+
+        document.querySelectorAll('[data-md-insert]').forEach(button => {
+            button.addEventListener('click', () => {
+                insertAtCursor(markdownInput, button.getAttribute('data-md-insert') || '');
+            });
+        });
+
+        document.querySelectorAll('[data-md-wrap]').forEach(button => {
+            button.addEventListener('click', () => {
+                const wrap = button.getAttribute('data-md-wrap') || '';
+                insertAtCursor(markdownInput, wrap, wrap);
+            });
+        });
+
+        markdownInput.addEventListener('input', renderMarkdownPreview);
+
+        imageFileInput.addEventListener('change', async event => {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+
+            try {
+                setStatus('Przetwarzam zdjęcie...');
+                const optimizedDataUrl = await optimizeImage(file);
+                imageUrlInput.value = optimizedDataUrl;
+                imagePreview.src = optimizedDataUrl;
+                imagePreview.classList.remove('hidden');
+                if (!imageAltInput.value.trim()) {
+                    imageAltInput.value = file.name.replace(/\.[^.]+$/, '');
+                }
+                setStatus('Zdjęcie dodane do formularza.');
+            } catch (error) {
+                setStatus(error.message || 'Nie udało się przetworzyć zdjęcia.', true);
+            }
         });
 
         form.addEventListener('submit', async event => {
@@ -191,6 +406,8 @@
                 generateButton.disabled = false;
             }
         });
+
+        renderMarkdownPreview();
     </script>
 </body>
 </html>
