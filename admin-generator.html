@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Generator artykułów | Vanta Media</title>
+    <meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+    <link rel="icon" type="image/png" href="LOGO%20VM%20MINI.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-900">
+    <main class="max-w-5xl mx-auto px-4 py-8 sm:py-12">
+        <section class="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 mb-6">
+            <h1 class="text-2xl sm:text-3xl font-bold mb-2">Generator artykułów (panel prywatny)</h1>
+            <p class="text-slate-600">Dostęp tylko po loginie i haśle ustawionym w Vercel ENV: <code>ARTICLE_ADMIN_USER</code> oraz <code>ARTICLE_ADMIN_PASSWORD</code>.</p>
+        </section>
+
+        <section class="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Dane dostępu</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <label class="block">
+                    <span class="text-sm text-slate-600">Login</span>
+                    <input id="admin-user" type="text" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" autocomplete="username">
+                </label>
+                <label class="block">
+                    <span class="text-sm text-slate-600">Hasło</span>
+                    <input id="admin-password" type="password" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" autocomplete="current-password">
+                </label>
+            </div>
+        </section>
+
+        <section class="bg-white border border-slate-200 rounded-xl p-6 sm:p-8">
+            <h2 class="text-xl font-semibold mb-4">Dane artykułu</h2>
+            <form id="generator-form" class="space-y-4">
+                <label class="block">
+                    <span class="text-sm text-slate-600">Tytuł *</span>
+                    <input id="title" type="text" required class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2">
+                </label>
+                <label class="block">
+                    <span class="text-sm text-slate-600">Krótki opis / meta description *</span>
+                    <input id="description" type="text" required class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2">
+                </label>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <label class="block">
+                        <span class="text-sm text-slate-600">Kategoria *</span>
+                        <input id="category" type="text" required value="Marketing i sprzedaż" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2">
+                    </label>
+                    <label class="block">
+                        <span class="text-sm text-slate-600">Data publikacji (np. 1 czerwca 2026) *</span>
+                        <input id="publish-date" type="text" required class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2">
+                    </label>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <label class="block">
+                        <span class="text-sm text-slate-600">URL obrazka *</span>
+                        <input id="image-url" type="url" required class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2">
+                    </label>
+                    <label class="block">
+                        <span class="text-sm text-slate-600">ALT obrazka *</span>
+                        <input id="image-alt" type="text" required class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2">
+                    </label>
+                </div>
+                <label class="block">
+                    <span class="text-sm text-slate-600">Lead pod nagłówkiem (opcjonalnie)</span>
+                    <textarea id="intro" rows="2" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2"></textarea>
+                </label>
+                <label class="block">
+                    <span class="text-sm text-slate-600">Treść artykułu * (akapity oddzielaj pustą linią)</span>
+                    <textarea id="body" rows="12" required class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2"></textarea>
+                </label>
+
+                <div class="flex flex-wrap gap-3">
+                    <button type="submit" id="generate-button" class="inline-flex items-center gap-2 bg-black text-white px-5 py-2.5 rounded-lg hover:bg-slate-900">
+                        Generuj
+                    </button>
+                    <span id="status" class="text-sm text-slate-600 flex items-center"></span>
+                </div>
+            </form>
+        </section>
+
+        <section id="result-section" class="hidden mt-6 space-y-6">
+            <article class="bg-white border border-slate-200 rounded-xl p-6 sm:p-8">
+                <h3 class="text-lg font-semibold mb-2">Wynik</h3>
+                <p class="text-sm text-slate-600 mb-1">Slug: <code id="result-slug"></code></p>
+                <p class="text-sm text-slate-600 mb-4">Plik: <code id="result-file"></code></p>
+            </article>
+
+            <article class="bg-white border border-slate-200 rounded-xl p-6 sm:p-8">
+                <div class="flex items-center justify-between gap-3 mb-3">
+                    <h3 class="text-lg font-semibold">Kod nowego pliku artykułu</h3>
+                    <button type="button" data-copy-target="article-html" class="text-sm border border-slate-300 rounded-md px-3 py-1.5 hover:bg-slate-50">Kopiuj</button>
+                </div>
+                <textarea id="article-html" rows="18" class="w-full border border-slate-300 rounded-lg px-3 py-2 font-mono text-xs"></textarea>
+            </article>
+
+            <article class="bg-white border border-slate-200 rounded-xl p-6 sm:p-8">
+                <div class="flex items-center justify-between gap-3 mb-3">
+                    <h3 class="text-lg font-semibold">Snippet do dodania do `blog.html`</h3>
+                    <button type="button" data-copy-target="blog-card-html" class="text-sm border border-slate-300 rounded-md px-3 py-1.5 hover:bg-slate-50">Kopiuj</button>
+                </div>
+                <textarea id="blog-card-html" rows="10" class="w-full border border-slate-300 rounded-lg px-3 py-2 font-mono text-xs"></textarea>
+            </article>
+        </section>
+    </main>
+
+    <script>
+        const form = document.getElementById('generator-form');
+        const statusText = document.getElementById('status');
+        const generateButton = document.getElementById('generate-button');
+        const resultSection = document.getElementById('result-section');
+        const resultSlug = document.getElementById('result-slug');
+        const resultFile = document.getElementById('result-file');
+        const articleHtml = document.getElementById('article-html');
+        const blogCardHtml = document.getElementById('blog-card-html');
+
+        function setStatus(message, isError = false) {
+            statusText.textContent = message;
+            statusText.className = isError ? 'text-sm text-red-600 flex items-center' : 'text-sm text-slate-600 flex items-center';
+        }
+
+        function buildBasicToken(user, password) {
+            return btoa(`${user}:${password}`);
+        }
+
+        async function copyFromTextArea(id) {
+            const field = document.getElementById(id);
+            if (!field) return;
+            await navigator.clipboard.writeText(field.value);
+            setStatus('Skopiowano do schowka.');
+        }
+
+        document.querySelectorAll('[data-copy-target]').forEach(button => {
+            button.addEventListener('click', async () => {
+                const targetId = button.getAttribute('data-copy-target');
+                try {
+                    await copyFromTextArea(targetId);
+                } catch (error) {
+                    setStatus('Nie udało się skopiować do schowka.', true);
+                }
+            });
+        });
+
+        form.addEventListener('submit', async event => {
+            event.preventDefault();
+            setStatus('Generowanie...');
+            generateButton.disabled = true;
+
+            const user = document.getElementById('admin-user').value.trim();
+            const password = document.getElementById('admin-password').value;
+
+            const payload = {
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                category: document.getElementById('category').value,
+                publishDate: document.getElementById('publish-date').value,
+                imageUrl: document.getElementById('image-url').value,
+                imageAlt: document.getElementById('image-alt').value,
+                intro: document.getElementById('intro').value,
+                body: document.getElementById('body').value
+            };
+
+            try {
+                const response = await fetch('/api/article-generator', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Basic ${buildBasicToken(user, password)}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Błąd generowania.');
+                }
+
+                resultSlug.textContent = data.slug;
+                resultFile.textContent = data.fileName;
+                articleHtml.value = data.articleHtml;
+                blogCardHtml.value = data.blogCardHtml;
+                resultSection.classList.remove('hidden');
+                setStatus('Gotowe. Skopiuj kod i wklej do plików.');
+            } catch (error) {
+                setStatus(error.message || 'Wystąpił błąd.', true);
+            } finally {
+                generateButton.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
