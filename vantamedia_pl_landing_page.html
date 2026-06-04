@@ -18,6 +18,9 @@
         tailwind.config = {
             theme: {
                 extend: {
+                    screens: {
+                        '3xl': '1920px',
+                    },
                     colors: {
                         primary: '#2563eb', // Główny niebieski
                         'primary-dark': '#1d4ed8',
@@ -255,23 +258,23 @@
     <!-- 2. SEKCJA HERO -->
     <section id="start" class="scroll-mt-24 sm:scroll-mt-28 pt-28 pb-16 lg:pt-40 lg:pb-24 overflow-hidden relative hero-balanced section-reveal is-visible">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col xl:flex-row items-center justify-center gap-12 xl:gap-16">
+            <div class="flex flex-col 3xl:flex-row items-center gap-12 3xl:gap-8">
                 
                 <!-- Lewa kolumna (Tekst) -->
-                <div class="w-full max-w-xl z-10 relative flex flex-col items-center text-center">
+                <div class="w-full 3xl:w-[45%] z-10 relative flex flex-col items-center text-center 3xl:items-start 3xl:text-left">
                     <p class="text-slate-500 text-xs sm:text-sm font-medium tracking-[0.12em] uppercase mb-6">
                         ROZWIĄZANIA PROGRAMISTYCZNE DLA BIZNESÓW
                     </p>
                     
                     <h1 class="text-4xl sm:text-5xl lg:text-[56px] leading-[1.15] sm:leading-[1.1] font-bold text-navy-dark mb-5 sm:mb-6">
-                        Strony, które pracują na <br class="hidden xl:block"/> <span class="text-gradient">Twój sukces</span>
+                        Strony, które pracują na <br class="hidden 3xl:block"/> <span class="text-gradient">Twój sukces</span>
                     </h1>
                     
-                    <p class="text-gray-500 text-base sm:text-lg md:text-xl leading-relaxed mb-8 max-w-lg mx-auto">
+                    <p class="text-gray-500 text-base sm:text-lg md:text-xl leading-relaxed mb-8 max-w-lg mx-auto 3xl:mx-0">
                         Projektujemy i wdrażamy systemy webowe, które działają szybko pod obciążeniem, skalują się bez bólu i zamieniają technologię w realny wynik biznesowy.
                     </p>
                     
-                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
+                    <div class="flex flex-col sm:flex-row items-center justify-center 3xl:justify-start gap-4 w-full sm:w-auto">
                         <a href="#portfolio" class="w-full sm:w-auto flex justify-center items-center gap-2 bg-black text-white px-7 py-4 sm:py-3.5 rounded-md font-medium transition-colors duration-300 hover:bg-neutral-900">
                             Zobacz nasze projekty <i class="ph ph-arrow-up-right text-lg"></i>
                         </a>
@@ -282,7 +285,7 @@
                 </div>
 
                 <!-- Prawa kolumna (Grafika) -->
-                <div class="w-full max-w-[600px] xl:flex-shrink-0 relative laptop-container flex justify-center mt-6 xl:mt-0 px-2 sm:px-0">
+                <div class="w-full 3xl:w-[55%] relative laptop-container flex justify-center mt-6 3xl:mt-0 px-2 sm:px-0">
                     <!-- CSS Laptop Mockup -->
                     <div class="laptop-screen relative w-full max-w-[340px] sm:max-w-[500px] lg:max-w-[600px] z-10">
                         <!-- Obudowa ekranu -->
