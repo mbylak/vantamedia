@@ -600,15 +600,15 @@
         </div>
     </footer>
 
-    <div id="contact-modal" data-open="false" class="fixed inset-0 z-[90] bg-black/55 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+    <div id="contact-modal" data-open="false" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title" aria-hidden="true" class="fixed inset-0 z-[90] bg-black/55 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
         <div class="min-h-full w-full px-3 py-3 sm:px-4 sm:py-6 flex items-center justify-center">
             <div data-modal-panel class="relative w-full max-w-3xl max-h-[calc(100dvh-1.5rem)] sm:max-h-[calc(100dvh-3rem)] overflow-y-auto bg-white border border-gray-100 rounded-2xl shadow-xl transform translate-y-4 opacity-0 transition-all duration-300">
                 <button type="button" data-contact-close aria-label="Zamknij formularz" class="absolute top-4 right-4 inline-flex items-center justify-center w-10 h-10 rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors z-10">
-                    <i class="ph ph-x text-2xl"></i>
+                    <i class="ph ph-x text-2xl" aria-hidden="true"></i>
                 </button>
                 <div class="grid grid-cols-1 md:grid-cols-2">
                     <div class="bg-slate-50 px-5 py-6 sm:px-6 sm:py-7">
-                        <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">Zacznijmy współpracę 🤝</h2>
+                        <h2 id="contact-modal-title" class="text-2xl sm:text-3xl font-bold text-slate-900 mb-4">Zacznijmy współpracę 🤝</h2>
                         <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-6">
                             Zadzwoń, napisz lub wyślij krótką wiadomość. Wracamy z odpowiedzią tak szybko, jak to możliwe.
                         </p>
@@ -617,34 +617,43 @@
                             <a href="mailto:kontakt@vantamedia.pl" class="block text-lg sm:text-xl leading-tight font-bold text-[#0d57a0] hover:text-[#084b8c] transition-colors break-all">kontakt@vantamedia.pl</a>
                         </div>
                         <div class="flex items-center gap-5 text-2xl">
-                            <a href="https://www.facebook.com/vantamediapl" target="_blank" rel="noopener noreferrer" class="text-black hover:text-primary transition-colors" aria-label="Facebook"><i class="ph ph-facebook-logo"></i></a>
-                            </div>
+                            <a href="https://www.facebook.com/vantamediapl" target="_blank" rel="noopener noreferrer" class="text-black hover:text-primary transition-colors" aria-label="Facebook"><i class="ph ph-facebook-logo" aria-hidden="true"></i></a>
+                        </div>
                     </div>
                     <div class="px-5 py-6 sm:px-6 sm:py-7">
-                        <form id="contact-modal-form" class="space-y-4">
+                        <form id="contact-modal-form" class="space-y-4" novalidate>
+                            <div aria-hidden="true" class="absolute left-[-10000px] top-auto w-px h-px overflow-hidden">
+                                <label>Nie wypełniaj tego pola
+                                    <input type="text" name="company" tabindex="-1" autocomplete="off" />
+                                </label>
+                            </div>
                             <label class="block">
                                 <span class="text-slate-500 text-sm">Imię i nazwisko *</span>
-                                <input type="text" name="name" required class="mt-1.5 w-full border-0 border-b border-slate-300 focus:border-slate-500 focus:ring-0 px-0 py-2 text-slate-900" />
+                                <input type="text" name="name" required maxlength="120" autocomplete="name" class="mt-1.5 w-full border-0 border-b border-slate-300 focus:border-slate-500 focus:ring-0 px-0 py-2 text-slate-900" />
                             </label>
                             <label class="block">
                                 <span class="text-slate-500 text-sm">Telefon *</span>
-                                <input type="tel" name="phone" required class="mt-1.5 w-full border-0 border-b border-slate-300 focus:border-slate-500 focus:ring-0 px-0 py-2 text-slate-900" />
+                                <input type="tel" name="phone" required maxlength="30" inputmode="tel" autocomplete="tel" pattern="[+()0-9\s\-]{7,20}" title="Podaj numer telefonu (cyfry, spacje, +, -)" class="mt-1.5 w-full border-0 border-b border-slate-300 focus:border-slate-500 focus:ring-0 px-0 py-2 text-slate-900" />
                             </label>
                             <label class="block">
                                 <span class="text-slate-500 text-sm">E-mail *</span>
-                                <input type="email" name="email" required class="mt-1.5 w-full border-0 border-b border-slate-300 focus:border-slate-500 focus:ring-0 px-0 py-2 text-slate-900" />
+                                <input type="email" name="email" required maxlength="160" autocomplete="email" class="mt-1.5 w-full border-0 border-b border-slate-300 focus:border-slate-500 focus:ring-0 px-0 py-2 text-slate-900" />
                             </label>
                             <label class="block">
                                 <span class="text-slate-500 text-sm">Opis projektu</span>
-                                <textarea name="description" rows="3" class="mt-1.5 w-full rounded-xl border border-slate-300 focus:border-slate-500 focus:ring-0 px-3.5 py-2.5 text-slate-900 resize-y" placeholder="Opisz krótko, czego potrzebujesz"></textarea>
+                                <textarea name="description" rows="3" maxlength="4000" class="mt-1.5 w-full rounded-xl border border-slate-300 focus:border-slate-500 focus:ring-0 px-3.5 py-2.5 text-slate-900 resize-y" placeholder="Opisz krótko, czego potrzebujesz"></textarea>
                             </label>
-                            <button type="submit" class="inline-flex items-center justify-center bg-[#0d57a0] text-white px-7 py-3 rounded-xl font-bold tracking-wide hover:bg-[#084b8c] transition-colors">
+                            <label class="flex items-start gap-2 text-xs text-slate-500 leading-snug">
+                                <input type="checkbox" name="consent" required class="mt-0.5 h-4 w-4 rounded border-slate-300 text-[#0d57a0] focus:ring-[#0d57a0]" />
+                                <span>Akceptuję <a href="/polityka-prywatnosci" target="_blank" rel="noopener" class="underline hover:text-[#0d57a0]">politykę prywatności</a> i wyrażam zgodę na przetwarzanie moich danych w celu kontaktu zwrotnego. *</span>
+                            </label>
+                            <button type="submit" class="inline-flex items-center justify-center bg-[#0d57a0] text-white px-7 py-3 rounded-xl font-bold tracking-wide hover:bg-[#084b8c] transition-colors disabled:opacity-70 disabled:cursor-not-allowed">
                                 WYŚLIJ
                             </button>
-                            <p id="contact-modal-success" class="hidden text-sm text-emerald-600 font-medium">
+                            <p id="contact-modal-success" role="status" aria-live="polite" class="hidden text-sm text-emerald-600 font-medium">
                                 Dziękujemy! Wiadomość została wysłana. Skontaktujemy się z Tobą najszybciej jak to możliwe.
                             </p>
-                            <p id="contact-modal-error" class="hidden text-sm text-red-600 font-medium">
+                            <p id="contact-modal-error" role="alert" aria-live="assertive" class="hidden text-sm text-red-600 font-medium">
                                 Nie udało się wysłać wiadomości. Spróbuj ponownie lub napisz na kontakt@vantamedia.pl.
                             </p>
                         </form>
@@ -674,32 +683,38 @@
             }
 
             // Toggle mobilnego menu
-            mobileMenuBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
-            });
-
-            // Zamknij menu po kliknięciu w link
-            const mobileLinks = mobileMenu.querySelectorAll('a');
-            mobileLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    mobileMenu.classList.add('hidden');
+            if (mobileMenuBtn && mobileMenu) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
                 });
-            });
+
+                // Zamknij menu po kliknięciu w link
+                const mobileLinks = mobileMenu.querySelectorAll('a');
+                mobileLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileMenu.classList.add('hidden');
+                    });
+                });
+            }
+
+            let lastFocusedBeforeModal = null;
 
             const openContactModal = event => {
                 if (event) event.preventDefault();
                 if (!contactModal || !contactModalPanel) return;
+                lastFocusedBeforeModal = document.activeElement;
                 contactModal.dataset.open = 'true';
+                contactModal.setAttribute('aria-hidden', 'false');
                 contactModal.classList.remove('opacity-0', 'pointer-events-none');
                 document.body.classList.add('overflow-hidden');
-                mobileMenu.classList.add('hidden');
+                if (mobileMenu) mobileMenu.classList.add('hidden');
                 if (contactSuccess) contactSuccess.classList.add('hidden');
                 if (contactError) contactError.classList.add('hidden');
                 requestAnimationFrame(() => {
                     contactModalPanel.classList.remove('translate-y-4', 'opacity-0');
                 });
                 setTimeout(() => {
-                    const firstInput = contactModal.querySelector('input, textarea');
+                    const firstInput = contactModal.querySelector('input:not([type="hidden"]):not([tabindex="-1"]), textarea');
                     if (firstInput) firstInput.focus();
                 }, 80);
             };
@@ -707,9 +722,13 @@
             const closeContactModal = () => {
                 if (!contactModal || !contactModalPanel) return;
                 contactModal.dataset.open = 'false';
+                contactModal.setAttribute('aria-hidden', 'true');
                 contactModalPanel.classList.add('translate-y-4', 'opacity-0');
                 contactModal.classList.add('opacity-0', 'pointer-events-none');
                 document.body.classList.remove('overflow-hidden');
+                if (lastFocusedBeforeModal && typeof lastFocusedBeforeModal.focus === 'function') {
+                    try { lastFocusedBeforeModal.focus(); } catch (_) {}
+                }
             };
 
             contactTriggers.forEach(trigger => {
@@ -736,9 +755,19 @@
 
             if (contactForm) {
                 const contactSubmitButton = contactForm.querySelector('button[type="submit"]');
+                const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                const PHONE_REGEX = /^[+()0-9\s-]{7,20}$/;
+                let isSubmitting = false;
+
+                const showError = message => {
+                    if (!contactError) return;
+                    contactError.textContent = message || 'Nie udało się wysłać wiadomości. Spróbuj ponownie lub napisz na kontakt@vantamedia.pl.';
+                    contactError.classList.remove('hidden');
+                };
 
                 contactForm.addEventListener('submit', async event => {
                     event.preventDefault();
+                    if (isSubmitting) return;
 
                     if (contactSuccess) contactSuccess.classList.add('hidden');
                     if (contactError) contactError.classList.add('hidden');
@@ -748,36 +777,59 @@
                         name: String(formData.get('name') || '').trim(),
                         phone: String(formData.get('phone') || '').trim(),
                         email: String(formData.get('email') || '').trim(),
-                        description: String(formData.get('description') || '').trim()
+                        description: String(formData.get('description') || '').trim(),
+                        consent: formData.get('consent') === 'on' || formData.get('consent') === 'true',
+                        company: String(formData.get('company') || '')
                     };
 
+                    if (!payload.name || !payload.email || !payload.phone) {
+                        showError('Uzupełnij wszystkie wymagane pola formularza.');
+                        return;
+                    }
+                    if (!EMAIL_REGEX.test(payload.email)) {
+                        showError('Podaj poprawny adres e-mail.');
+                        return;
+                    }
+                    if (!PHONE_REGEX.test(payload.phone)) {
+                        showError('Podaj poprawny numer telefonu (cyfry, spacje, +, -).');
+                        return;
+                    }
+                    if (!payload.consent) {
+                        showError('Aby wysłać wiadomość, zaakceptuj politykę prywatności.');
+                        return;
+                    }
+
+                    isSubmitting = true;
                     if (contactSubmitButton) {
                         contactSubmitButton.disabled = true;
-                        contactSubmitButton.classList.add('opacity-70', 'cursor-not-allowed');
+                        contactSubmitButton.setAttribute('aria-busy', 'true');
                         contactSubmitButton.textContent = 'WYSYŁANIE...';
                     }
 
                     try {
                         const response = await fetch('/api/contact', {
                             method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
+                            headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify(payload)
                         });
 
+                        let data = null;
+                        try { data = await response.json(); } catch (_) { data = null; }
+
                         if (!response.ok) {
-                            throw new Error('Contact form request failed');
+                            const message = data && typeof data.error === 'string' ? data.error : null;
+                            throw new Error(message || 'Contact form request failed');
                         }
 
                         contactForm.reset();
                         if (contactSuccess) contactSuccess.classList.remove('hidden');
                     } catch (error) {
-                        if (contactError) contactError.classList.remove('hidden');
+                        showError(error && error.message ? error.message : null);
                     } finally {
+                        isSubmitting = false;
                         if (contactSubmitButton) {
                             contactSubmitButton.disabled = false;
-                            contactSubmitButton.classList.remove('opacity-70', 'cursor-not-allowed');
+                            contactSubmitButton.removeAttribute('aria-busy');
                             contactSubmitButton.textContent = 'WYŚLIJ';
                         }
                     }
