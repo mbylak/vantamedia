@@ -1,0 +1,9 @@
+{
+  "name": "vantamedia-pl",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Strona vantamedia.pl wraz z funkcjami serwerowymi (Vercel).",
+  "engines": {
+    "node": ">=18.x"
+  }
+}
